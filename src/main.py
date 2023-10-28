@@ -20,6 +20,8 @@ def main():
     screen_width = 1000
     screen_height = 800
     screen = pygame.display.set_mode((screen_width, screen_height))
+    background_image = pygame.image.load('src/bg/bg.jpg')
+    background_image = pygame.transform.scale(background_image, (screen_width, screen_height))
 
     # 이미지 파일이 있는 폴더 경로 설정
     image_folder = "src/images/"
@@ -66,15 +68,18 @@ def main():
             if image_rect.left < 0 or image_rect.right > screen_width:
                 speed_x = -speed_x
                 current_image = random.choice(image_list)
+                current_image.set_alpha(80)
             if image_rect.top < 0 or image_rect.bottom > screen_height:
                 speed_y = -speed_y
                 current_image = random.choice(image_list)
+                current_image.set_alpha(80)
 
             # 이미지 회전 업데이트
             current_image = pygame.transform.rotate(current_image, rotation_speed)
 
         # 화면 초기화 및 이미지 그리기
         screen.fill((255, 255, 255))
+        screen.blit(background_image, (0, 0))
         screen.blit(current_image, image_rect)
 
         pygame.display.flip()

@@ -2,7 +2,7 @@ import pygame # 게임 상수를 지정해 놓은 간단한 ? 파일
 
 # 화면 및 칸 크기, 가로 세로 배열되는 크기를 지정
 WIDTH = 800
-HEIGHT = WIDTH + (WIDTH / 2)
+HEIGHT = WIDTH
 ROWS, COLS = 8, 8
 BLOCK_SIZE = WIDTH // COLS
 
