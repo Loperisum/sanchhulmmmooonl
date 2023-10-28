@@ -46,18 +46,14 @@ def main():
     speed_y = random.randint(5, 10)
     rotation_speed = random.randint(1, 5)
 
-    # 게임 루프
-    running = True
-    clock = pygame.time.Clock()
-
     # 음악 로드 및 재생
     pygame.mixer.music.load('src/intro.mp3')
     pygame.mixer.music.play(0)  # 음악 1회 재생
 
-    while running:
+    while processing:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                processing = False
 
         # 음악이 재생 중일 때만 이미지 동작
         if pygame.mixer.music.get_busy():
