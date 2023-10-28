@@ -12,4 +12,14 @@ class Board:
     def create_board(self):
         for row in range(ROWS):
             self.board.append([])
+            for col in range(COLS):
+                if(col % 2 == (row + 1) % 2):
+                    if (row < 3):
+                        self.board[row].append(Horse(row, col, RED))
+                    elif(row > 4):
+                        self.board[row].append(Horse(row, col, BLACK))
+                    else:
+                        self.board[row].append(0)
 
+                else:
+                    self.board[row].append(0)
