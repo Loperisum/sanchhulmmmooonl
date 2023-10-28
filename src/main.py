@@ -8,6 +8,7 @@ import time
 pygame.init()
 
 FPS = 60
+# Frames Per Sec
 
 pygame.display.set_caption('즐겁고 신나는 체커 게임\(￣︶￣*\))')
 

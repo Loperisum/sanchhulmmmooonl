@@ -1,7 +1,7 @@
 from .define import RED, WHITE, SQUARE_SIZE, GREY, CROWN
 import pygame
 
-class Piece:
+class Horse:
     PADDING = 15
     OUTLINE = 2
 
