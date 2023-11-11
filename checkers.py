@@ -4,7 +4,7 @@ from time import sleep
 
 pygame.font.init()
 
-##COLORS##
+##색상##
 #             R    G    B
 WHITE    = (255, 255, 255)
 BLUE     = (  0,   0, 255)
@@ -13,42 +13,33 @@ BLACK    = (  0,   0,   0)
 GOLD     = (255, 215,   0)
 HIGH     = (160, 190, 255)
 
-##DIRECTIONS##
+##방향##
 NORTHWEST = "northwest"
 NORTHEAST = "northeast"
 SOUTHWEST = "southwest"
 SOUTHEAST = "southeast"
 
 class Game:
-	"""
-	The main game control.
-	"""
-
 	def __init__(self, loop_mode):
 		self.graphics = Graphics()
 		self.board = Board()
 		self.endit = False
 		self.turn = BLUE
-		self.selected_piece = None # a board location.
+		self.selected_piece = None
 		self.hop = False
 		self.loop_mode = loop_mode
 		self.selected_legal_moves = []
 		self.graphics.paused = False
 
 	def setup(self):
-		"""Draws the window and board at the beginning of the game"""
+		# Draw the window and board at the beginning of the game
 		self.graphics.setup_window()
 
 	def player_turn(self):
-		"""
-		The event loop. This is where events are triggered
-		(like a mouse click) and then effect the game state.
-		"""
 		mouse_pos = tuple(map(int, pygame.mouse.get_pos()))
 		self.mouse_pos = tuple(map(int, self.graphics.board_coords(mouse_pos[0], mouse_pos[1]))) # what square is the mouse in?
 		if self.selected_piece != None:
 			self.selected_legal_moves = self.board.legal_moves(self.selected_piece[0], self.selected_piece[1], self.hop)
-			 #print("selected_legal_moves: ", self.selected_legal_moves)
 
 		for event in pygame.event.get():
 
@@ -61,7 +52,6 @@ class Game:
 					self.graphics.message = not self.graphics.message
 
 			if event.type == MOUSEBUTTONDOWN:
-				# print(self.hop)
 				if self.hop == False:
 					if self.board.location(self.mouse_pos[0], self.mouse_pos[1]).occupant != None and self.board.location(self.mouse_pos[0], self.mouse_pos[1]).occupant.color == self.turn:
 						self.selected_piece = self.mouse_pos
@@ -91,16 +81,13 @@ class Game:
 
 
 	def update(self):
-		"""Calls on the graphics class to update the game display."""
 		self.graphics.update_display(self.board, self.selected_legal_moves, self.selected_piece)
 
 	def terminate_game(self):
-		"""Quits the program and ends the game."""
 		pygame.quit()
 		sys.exit()
 
 	def main(self):
-		""""This executes the game and controls its flow."""
 		self.setup()
 
 		while True: # main game loop
@@ -108,10 +95,6 @@ class Game:
 			self.update()
 
 	def end_turn(self):
-		"""
-		End the turn. Switches the current player.
-		end_turn() also checks for and game and resets a lot of class attributes.
-		"""
 		if self.turn == BLUE:
 			self.turn = RED
 		else:
@@ -136,9 +119,6 @@ class Game:
 
 
 	def check_for_endgame(self):
-		"""
-		Checks to see if a player has run out of moves or pieces. If so, then return True. Else return False.
-		"""
 		for x in range(8):
 			for y in range(8):
 				if self.board.location(x, y).color == BLACK and self.board.location(x, y).occupant != None and self.board.location(x, y).occupant.color == self.turn:
@@ -166,9 +146,6 @@ class Graphics:
 		self.bg = pygame.image.load('bg.png')
 
 	def setup_window(self):
-		"""
-		This initializes the window and sets the caption at the top.
-		"""
 		pygame.init()
 		pygame.display.set_caption(self.caption)
 
@@ -182,7 +159,7 @@ class Graphics:
 		self.draw_board_pieces(board)
 
 		if self.paused:
-			self.draw_message("Paused")  # 일시정지 메시지를 그립니다.
+			self.draw_message("Paused")  # 일시정지 메시지를 그림.
 			self.screen.blit(self.bg, (0, 0))
 
 		if self.message:
@@ -200,46 +177,28 @@ class Graphics:
 				pygame.draw.rect(self.screen, board[x][y].color, (x * self.square_size, y * self.square_size, self.square_size, self.square_size), )
 
 	def draw_board_pieces(self, board):
-		"""
-		Takes a board object and draws all of its pieces to the display
-		"""
 		for x in range(8):
 			for y in range(8):
 				if board.matrix[x][y].occupant != None:
 					pygame.draw.circle(self.screen, board.matrix[x][y].occupant.color, tuple(map(int, self.pixel_coords((x, y)))), int(self.piece_size))
 
 					if board.location(x,y).occupant.king == True:
-						 #print("228->", self.screen, GOLD, self.pixel_coords((x, y)), self.piece_size // 1.7, self.piece_size // 4)
 						pygame.draw.circle(self.screen, GOLD, self.pixel_coords((x, y)), int(self.piece_size // 1.7), self.piece_size // 4)
 
 	def pixel_coords(self, board_coords):
-		"""
-		Takes in a tuple of board coordinates (x,y)
-		and returns the pixel coordinates of the center of the square at that location.
-		"""
 		return (board_coords[0] * self.square_size + self.piece_size, board_coords[1] * self.square_size + self.piece_size)
 
 	def board_coords(self, pixel_x, pixel_y):
-		"""
-		Does the reverse of pixel_coords(). Takes in a tuple of of pixel coordinates and returns what square they are in.
-		"""
 		return (pixel_x // self.square_size, pixel_y // self.square_size)
 
 	def highlight_squares(self, squares, origin):
-		"""
-		Squares is a list of board coordinates.
-		highlight_squares highlights them.
-		"""
 		for square in squares:
 			pygame.draw.rect(self.screen, HIGH, (square[0] * self.square_size, square[1] * self.square_size, self.square_size, self.square_size))
 
 		if origin != None:
 			pygame.draw.rect(self.screen, HIGH, (origin[0] * self.square_size, origin[1] * self.square_size, self.square_size, self.square_size))
 
-	def draw_message(self, message):
-		"""
-		Draws message to the screen.
-		"""
+	def draw_message(self, message): # draw message on the screen
 		print("in here")
 		self.message = True
 		self.font_obj = pygame.font.Font('NanumMyeongjoExtraBold.ttf', 44)
@@ -260,8 +219,6 @@ class Board:
 
 		matrix = [[None] * 8 for i in range(8)]
 
-		# The following code block has been adapted from
-		# http://itgirl.dreamhosters.com/itgirlgames/games/Program%20Leaders/ClareR/Checkers/checkers.py
 		for x in range(8):
 			for y in range(8):
 				if (x % 2 != 0) and (y % 2 == 0):
@@ -273,7 +230,7 @@ class Board:
 				elif (x % 2 == 0) and (y % 2 == 0):
 					matrix[y][x] = Square(BLACK)
 
-		# initialize the pieces and put them in the appropriate squares
+		# 말들 초기화 하고 위치 세밀하게 구분하여 배치
 
 		for x in range(8):
 			for y in range(3):
@@ -286,10 +243,6 @@ class Board:
 		return matrix
 
 	def board_string(self, board):
-		"""
-		Takes a board and returns a matrix of the board space colors. Used for testing new_board()
-		"""
-
 		board_string = [[None] * 8] * 8
 
 		for x in range(8):
@@ -303,25 +256,6 @@ class Board:
 		return board_string
 
 	def rel(self, dir, x, y):
-		"""
-		Returns the coordinates one square in a different direction to (x,y).
-
-		===DOCTESTS===
-
-		>>> board = Board()
-
-		>>> board.rel(NORTHWEST, (1,2))
-		(0,1)
-
-		>>> board.rel(SOUTHEAST, (3,4))
-		(4,5)
-
-		>>> board.rel(NORTHEAST, (3,6))
-		(4,5)
-
-		>>> board.rel(SOUTHWEST, (2,5))
-		(1,6)
-		"""
 		if dir == NORTHWEST:
 			return (x - 1, y - 1)
 		elif dir == NORTHEAST:
@@ -334,27 +268,14 @@ class Board:
 			return 0
 
 	def adjacent(self, x, y):
-		"""
-		Returns a list of squares locations that are adjacent (on a diagonal) to (x,y).
-		"""
-
 		return [self.rel(NORTHWEST, x,y), self.rel(NORTHEAST, x,y),self.rel(SOUTHWEST, x,y),self.rel(SOUTHEAST, x,y)]
 
 	def location(self, x, y):
-		"""
-		Takes a set of coordinates as arguments and returns self.matrix[x][y]
-		This can be faster than writing something like self.matrix[coords[0]][coords[1]]
-		"""
 		x = int(x)
 		y = int(y)
 		return self.matrix[x][y]
 
 	def blind_legal_moves(self, x, y):
-		"""
-		Returns a list of blind legal move locations from a set of coordinates (x,y) on the board.
-		If that location is empty, then blind_legal_moves() return an empty list.
-		"""
-		 #print(x)
 		if self.matrix[x][y].occupant != None:
 
 			if self.matrix[x][y].occupant.king == False and self.matrix[x][y].occupant.color == BLUE:
@@ -372,11 +293,6 @@ class Board:
 		return blind_legal_moves
 
 	def legal_moves(self, x, y, hop = False):
-		"""
-		Returns a list of legal move locations from a given set of coordinates (x,y) on the board.
-		If that location is empty, then legal_moves() returns an empty list.
-		"""
-		 #print(x, y)
 		blind_legal_moves = self.blind_legal_moves(x, y)
 		# print('BLind Legal moves', blind_legal_moves)
 		legal_moves = []
@@ -400,15 +316,9 @@ class Board:
 		return legal_moves
 
 	def remove_piece(self, x, y):
-		"""
-		Removes a piece from the board at position (x,y).
-		"""
 		self.matrix[x][y].occupant = None
 
 	def move_piece(self, start_x, start_y, end_x, end_y):
-		"""
-		Move a piece from (start_x, start_y) to (end_x, end_y).
-		"""
 
 		self.matrix[end_x][end_y].occupant = self.matrix[start_x][start_y].occupant
 		self.remove_piece(start_x, start_y)
@@ -416,23 +326,6 @@ class Board:
 		self.king(end_x, end_y)
 
 	def is_end_square(self, coords):
-		"""
-		Is passed a coordinate tuple (x,y), and returns true or
-		false depending on if that square on the board is an end square.
-
-		===DOCTESTS===
-
-		>>> board = Board()
-
-		>>> board.is_end_square((2,7))
-		True
-
-		>>> board.is_end_square((5,0))
-		True
-
-		>>>board.is_end_square((0,5))
-		False
-		"""
 
 		if coords[1] == 0 or coords[1] == 7:
 			return True
@@ -440,22 +333,6 @@ class Board:
 			return False
 
 	def on_board(self, x, y):
-		"""
-		Checks to see if the given square (x,y) lies on the board.
-		If it does, then on_board() return True. Otherwise it returns false.
-
-		===DOCTESTS===
-		>>> board = Board()
-
-		>>> board.on_board((5,0)):
-		True
-
-		>>> board.on_board(-2, 0):
-		False
-
-		>>> board.on_board(3, 9):
-		False
-		"""
 
 		if x < 0 or y < 0 or x > 7 or y > 7:
 			return False
@@ -464,10 +341,7 @@ class Board:
 
 
 	def king(self, x, y):
-		"""
-		Takes in (x,y), the coordinates of square to be considered for kinging.
-		If it meets the criteria, then king() kings the piece in that square and kings it.
-		"""
+		# 왕으로 승급
 		if self.location(x, y).occupant != None:
 			if (self.location(x, y).occupant.color == BLUE and y == 0) or (self.location(x, y).occupant.color == RED and y == 7):
 				self.location(x, y).occupant.crown()
@@ -484,7 +358,7 @@ class Board:
 					print('X', end=" ")
 			print('')
 
-class Piece:
+class Piece: # 실질적인 승급을 관리
 	def __init__(self, color, king = False):
 		self.color = color
 		self.king = king
