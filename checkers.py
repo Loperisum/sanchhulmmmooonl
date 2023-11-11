@@ -161,6 +161,9 @@ class Graphics:
 		if self.paused:
 			self.draw_message("Paused")  # 일시정지 메시지를 그림.
 			self.screen.blit(self.bg, (0, 0))
+			pygame.event.set_blocked(MOUSEBUTTONDOWN)
+		else:
+			pygame.event.set_allowed(MOUSEBUTTONDOWN)
 
 		if self.message:
 			self.screen.blit(self.text_surface_obj, self.text_rect_obj)
