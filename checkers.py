@@ -89,8 +89,8 @@ class Game:
 			 #print("selected_legal_moves: ", self.selected_legal_moves)
 
 		for event in pygame.event.get():
-			if pause:
-				pause_screen()
+			if self.paused:
+				self.pause_screen()
 
 			if event.type == QUIT:
 				self.terminate_game()
@@ -177,8 +177,9 @@ class Game:
 				self.terminate_game()
 
 	def pause_screen(self):
-		pygame.draw.rect(self.graphics.screen, (128, 128, 150), [0, 0, [self.graphics.window_size, self.graphics.window_size]])
+		pygame.draw.rect(self.graphics.screen, (128, 128, 150), [0, 0, self.graphics.window_size, self.graphics.window_size])
 		self.graphics.screen.blit(self.graphics.screen, (0, 0))
+		pygame.event.set_blocked(pygame.MOUSEBUTTONDOWN)
 
 
 	def check_for_endgame(self):
