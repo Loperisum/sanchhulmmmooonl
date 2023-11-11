@@ -18,6 +18,7 @@ SOUTHEAST = "southeast"
 
 
 def main():
+    
     while True:
         game = checkers.Game(loop_mode=True)
         game.setup()

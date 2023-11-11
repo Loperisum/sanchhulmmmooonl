@@ -58,6 +58,7 @@ class Game:
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_ESCAPE:
 					self.graphics.paused = not self.graphics.paused
+					self.graphics.message = not self.graphics.message
 
 			if event.type == MOUSEBUTTONDOWN:
 				# print(self.hop)
@@ -162,6 +163,7 @@ class Graphics:
 
 		self.message = False
 		self.paused = False
+		self.bg = pygame.image.load('bg.png')
 
 	def setup_window(self):
 		"""
@@ -180,8 +182,8 @@ class Graphics:
 		self.draw_board_pieces(board)
 
 		if self.paused:
-			self.draw_message("Paused, press esc to continue.")  # 일시정지 메시지를 그립니다.
-			self.screen.fill((255, 255, 255))
+			self.draw_message("Paused")  # 일시정지 메시지를 그립니다.
+			self.screen.blit(self.bg, (0, 0))
 
 		if self.message:
 			self.screen.blit(self.text_surface_obj, self.text_rect_obj)
@@ -240,7 +242,7 @@ class Graphics:
 		"""
 		print("in here")
 		self.message = True
-		self.font_obj = pygame.font.Font('freesansbold.ttf', 44)
+		self.font_obj = pygame.font.Font('NanumMyeongjoExtraBold.ttf', 44)
 		self.text_surface_obj = self.font_obj.render(message, True, HIGH, BLACK)
 		self.text_rect_obj = self.text_surface_obj.get_rect()
 		self.text_rect_obj.center = (self.window_size // 2, self.window_size // 2)
