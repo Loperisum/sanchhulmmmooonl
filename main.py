@@ -22,21 +22,19 @@ def main():
         game = checkers.Game(loop_mode=True)
         game.setup()
         bot = gamebot.Bot(game, RED, mid_eval='piece_and_board',
-                          end_eval='sum_of_dist', method='alpha_beta', depth=3)
+                          end_eval='sum_of_dist', method='minmax', depth=3)
         random_bot_blue = gamebot.Bot(
-            game, BLUE, mid_eval='piece_and_board_pov', method='alpha_beta', depth=3, end_eval='sum_of_dist')
+            game, BLUE, mid_eval='piece_and_board_pov', method='minmax', depth=3, end_eval='sum_of_dist')
         while True:  # main game loop
             if game.turn == BLUE:
-                 # TO start player's turn uncomment the below line and comment a couple  of line below than that
                 game.player_turn()
                 #count_nodes = random_bot_blue.step(game.board, True)
                 #print('Total nodes explored in this step are', count_nodes)
                 game.update()
             else:
-                # TO start player's turn uncomment the below line and comment a couple  of line below than that
                 # game.player_turn()
                 count_nodes = bot.step(game.board, True)
-                print('Total nodes explored in this step are', count_nodes)
+                print('현재까지 탐색한 노드 수:', count_nodes)
                 game.update()
             if game.endit:
                 break

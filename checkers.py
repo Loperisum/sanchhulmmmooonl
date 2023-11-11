@@ -1,41 +1,3 @@
-"""
-checkers.py
-
-A simple checkers engine written in Python with the pygame 1.9.1 libraries.
-
-Here are the rules I am using: http://boardgames.about.com/cs/checkersdraughts/ht/play_checkers.htm
-
-I adapted some code from checkers.py found at
-http://itgirl.dreamhosters.com/itgirlgames/games/Program%20Leaders/ClareR/Checkers/checkers.py starting on line 159 of my program.
-
-This is the final version of my checkers project for Programming Workshop at Marlboro College. The entire thing has been rafactored and made almost completely object oriented.
-
-Funcitonalities include:
-
-- Having the pieces and board drawn to the screen
-
-- The ability to move pieces by clicking on the piece you want to move, then clicking on the square you would
-  like to move to. You can change you mind about the piece you would like to move, just click on a new piece of yours.
-
-- Knowledge of what moves are legal. When moving pieces, you'll be limited to legal moves.
-
-- Capturing
-
-- DOUBLE capturing etc.
-
-- Legal move and captive piece highlighting
-
-- Turn changes
-
-- Automatic kinging and the ability for them to move backwords
-
-- Automatic check for and end game.
-
-- A silky smoooth 60 FPS!
-
-Everest Witman - May 2014 - Marlboro College - Programming Workshop
-"""
-
 import pygame, sys
 from pygame.locals import *
 from time import sleep
@@ -71,7 +33,7 @@ class Game:
 		self.hop = False
 		self.loop_mode = loop_mode
 		self.selected_legal_moves = []
-		self.paused = False
+		self.graphics.paused = False
 
 	def setup(self):
 		"""Draws the window and board at the beginning of the game"""
@@ -89,19 +51,13 @@ class Game:
 			 #print("selected_legal_moves: ", self.selected_legal_moves)
 
 		for event in pygame.event.get():
-			if self.paused:
-				self.pause_screen()
 
 			if event.type == QUIT or (event.type == KEYDOWN and event.key == K_q):
 				self.terminate_game()
 
-			if event.type == KEYDOWN:
+			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_ESCAPE:
-					if self.paused:
-						self.paused = False
-						pygame.event.set_allowed(pygame.MOUSEBUTTONDOWN)
-					else:
-						self.paused = True
+					self.graphics.paused = not self.graphics.paused
 
 			if event.type == MOUSEBUTTONDOWN:
 				# print(self.hop)
@@ -177,11 +133,6 @@ class Game:
 			else:
 				self.terminate_game()
 
-	def pause_screen(self):
-		pygame.draw.rect(self.graphics.screen, (128, 128, 150), [0, 0, self.graphics.window_size, self.graphics.window_size])
-		self.graphics.screen.blit(self.graphics.screen, (0, 0))
-		pygame.event.set_blocked(pygame.MOUSEBUTTONDOWN)
-
 
 	def check_for_endgame(self):
 		"""
@@ -210,6 +161,7 @@ class Graphics:
 		self.piece_size = self.square_size // 2
 
 		self.message = False
+		self.paused = False
 
 	def setup_window(self):
 		"""
@@ -226,6 +178,10 @@ class Graphics:
 
 		self.highlight_squares(legal_moves, selected_piece)
 		self.draw_board_pieces(board)
+
+		if self.paused:
+			self.draw_message("Paused, press esc to continue.")  # 일시정지 메시지를 그립니다.
+			self.screen.fill((255, 255, 255))
 
 		if self.message:
 			self.screen.blit(self.text_surface_obj, self.text_rect_obj)
@@ -253,7 +209,6 @@ class Graphics:
 					if board.location(x,y).occupant.king == True:
 						 #print("228->", self.screen, GOLD, self.pixel_coords((x, y)), self.piece_size // 1.7, self.piece_size // 4)
 						pygame.draw.circle(self.screen, GOLD, self.pixel_coords((x, y)), int(self.piece_size // 1.7), self.piece_size // 4)
-
 
 	def pixel_coords(self, board_coords):
 		"""
