@@ -92,13 +92,14 @@ class Game:
 			if self.paused:
 				self.pause_screen()
 
-			if event.type == QUIT:
+			if event.type == QUIT or (event.type == KEYDOWN and event.key == K_q):
 				self.terminate_game()
 
 			if event.type == KEYDOWN:
 				if event.key == pygame.K_ESCAPE:
 					if self.paused:
 						self.paused = False
+						pygame.event.set_allowed(pygame.MOUSEBUTTONDOWN)
 					else:
 						self.paused = True
 
