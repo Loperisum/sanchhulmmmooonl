@@ -71,6 +71,7 @@ class Game:
 		self.hop = False
 		self.loop_mode = loop_mode
 		self.selected_legal_moves = []
+		self.paused = False
 
 	def setup(self):
 		"""Draws the window and board at the beginning of the game"""
@@ -89,8 +90,24 @@ class Game:
 
 		for event in pygame.event.get():
 
+			if self.paused == True:
+				pygame.event.set_blocked(pygame.MOUSEBUTTONDOWN)
+
+			elif self.paused == False:
+				pygame.event.set_allowed(pygame.MOUSEBUTTONDOWN)
+
 			if event.type == QUIT:
 				self.terminate_game()
+
+			if event.type == KEYDOWN:
+				if event.key == pygame.K_p:
+					if self.paused != True:
+						self.pause_game()
+						pygame.event.set_blocked(pygame.MOUSEBUTTONDOWN)
+				elif event.key == pygame.K_r:
+					if self.paused == True:
+						self.unpause_game()
+						pygame.event.set_allowed(pygame.MOUSEBUTTONDOWN)
 
 			if event.type == MOUSEBUTTONDOWN:
 				# print(self.hop)
@@ -130,6 +147,14 @@ class Game:
 		"""Quits the program and ends the game."""
 		pygame.quit()
 		sys.exit()
+
+	def pause_game(self):
+		"""Pauses the game by setting paused to true."""
+		self.paused = True
+	
+	def unpause_game(self):
+		"""Unpauses the game by setting paused to false."""
+		self.paused = False
 
 	def main(self):
 		""""This executes the game and controls its flow."""
