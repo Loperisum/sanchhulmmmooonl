@@ -1,8 +1,9 @@
 import pygame, sys
 from pygame.locals import *
 from time import sleep
+import pygame_gui
 
-pygame.font.init()
+pygame.init()
 
 ##색상##
 #             R    G    B
@@ -19,6 +20,8 @@ NORTHEAST = "northeast"
 SOUTHWEST = "southwest"
 SOUTHEAST = "southeast"
 
+manager = pygame_gui.UIManager((600, 600))
+
 class Game:
 	def __init__(self, loop_mode):
 		self.graphics = Graphics()
@@ -30,6 +33,10 @@ class Game:
 		self.loop_mode = loop_mode
 		self.selected_legal_moves = []
 		self.graphics.paused = False
+		self.confirm_dialog = None
+		self.quit_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((350, 275), (100, 50)),
+                                           text='Quit',
+                                           manager=manager)# quit button create
 
 	def setup(self):
 		# Draw the window and board at the beginning of the game
@@ -44,6 +51,7 @@ class Game:
 		for event in pygame.event.get():
 
 			if event.type == QUIT or (event.type == KEYDOWN and event.key == K_q):
+
 				self.terminate_game()
 
 			if event.type == pygame.KEYDOWN:
