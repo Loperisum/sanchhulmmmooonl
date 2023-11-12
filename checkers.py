@@ -202,7 +202,7 @@ class Graphics:
 			pygame.draw.rect(self.screen, HIGH, (origin[0] * self.square_size, origin[1] * self.square_size, self.square_size, self.square_size))
 
 	def draw_message(self, message): # draw message on the screen
-		print("in here")
+		print("[DEBUG]: 메시지 실행중입니다.")
 		self.message = True
 		self.font_obj = pygame.font.Font('NanumMyeongjoExtraBold.ttf', 44)
 		self.text_surface_obj = self.font_obj.render(message, True, HIGH, BLACK)
