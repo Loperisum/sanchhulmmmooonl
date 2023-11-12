@@ -24,7 +24,13 @@ while running:
     # 이벤트 처리
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
+            # 정말 나가겠냐고 묻는 메시지 박스 생성
+            confirm_dialog = pygame_gui.windows.UIConfirmationDialog(rect=pygame.Rect((250, 200), (300, 200)),
+                                                                    manager=manager,
+                                                                    window_title='Quit Confirmation',
+                                                                    action_long_desc='Are you sure you want to quit?',
+                                                                    action_short_name='Yes',
+                                                                    blocking=True)
 
         if event.type == pygame.USEREVENT:
             if event.user_type == pygame_gui.UI_BUTTON_PRESSED:

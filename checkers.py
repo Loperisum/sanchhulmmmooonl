@@ -33,7 +33,6 @@ class Game:
 		self.loop_mode = loop_mode
 		self.selected_legal_moves = []
 		self.graphics.paused = False
-		self.confirm_dialog = None
 		self.quit_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((350, 275), (100, 50)),
                                            text='Quit',
                                            manager=manager)# quit button create
@@ -51,7 +50,7 @@ class Game:
 		for event in pygame.event.get():
 
 			if event.type == QUIT or (event.type == KEYDOWN and event.key == K_q):
-
+				
 				self.terminate_game()
 
 			if event.type == pygame.KEYDOWN:
