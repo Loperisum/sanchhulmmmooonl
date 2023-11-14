@@ -33,9 +33,9 @@ class Game:
 		self.loop_mode = loop_mode
 		self.selected_legal_moves = []
 		self.graphics.paused = False
-		self.quit_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((350, 275), (100, 50)),
-                                           text='Quit',
-                                           manager=manager)# quit button create
+		self.quit_confirm = None
+		self.clock = pygame.time.Clock()
+		self.fps = 60
 
 	def setup(self):
 		# Draw the window and board at the beginning of the game
@@ -48,10 +48,21 @@ class Game:
 			self.selected_legal_moves = self.board.legal_moves(self.selected_piece[0], self.selected_piece[1], self.hop)
 
 		for event in pygame.event.get():
-
+			manager.process_events(event)
 			if event.type == QUIT or (event.type == KEYDOWN and event.key == K_q):
-				
-				self.terminate_game()
+				if self.quit_confirm is None:
+					self.quit_confirm = pygame_gui.windows.UIConfirmationDialog(
+							rect=pygame.Rect((self.graphics.window_size // 2 - 100, self.graphics.window_size // 2 - 75), (200, 150)),
+							manager=manager,
+							window_title='Confirm Exit',
+							action_long_desc='Are you sure you want to quit?',
+							action_short_name='Yes',
+							)
+					
+			if event.type == pygame_gui.UI_CONFIRMATION_DIALOG_CONFIRMED:
+				if self.quit_confirm == event.ui_element:
+					self.quit_confirm = None
+					self.terminate_game()
 
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_ESCAPE:
@@ -89,6 +100,10 @@ class Game:
 
 	def update(self):
 		self.graphics.update_display(self.board, self.selected_legal_moves, self.selected_piece)
+		manager.update(pygame.time.get_ticks())
+		manager.draw_ui(self.graphics.screen)
+		pygame.display.update()
+		self.clock.tick(self.fps)
 
 	def terminate_game(self):
 		pygame.quit()
