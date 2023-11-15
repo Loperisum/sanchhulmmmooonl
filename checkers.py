@@ -33,9 +33,9 @@ class Game:
 		self.loop_mode = loop_mode
 		self.selected_legal_moves = []
 		self.graphics.paused = False
-		self.quit_confirm = None
 		self.clock = pygame.time.Clock()
 		self.fps = 60
+		self.graphics.confirm = None
 
 	def setup(self):
 		# Draw the window and board at the beginning of the game
@@ -49,7 +49,7 @@ class Game:
 
 		for event in pygame.event.get():
 			if event.type == QUIT:
-				pass
+				self.terminate_game()
 
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_ESCAPE:
@@ -58,10 +58,20 @@ class Game:
 				elif event.key == pygame.K_q:
 					self.graphics.exit = not self.graphics.exit
 
+					if self.graphics.exit:
+						self.graphics.confirm = pygame_gui.windows.UIConfirmationDialog(rect=pygame.Rect((250, 200), (300, 200)),
+                                                                    manager=manager,
+                                                                    window_title='Quit Confirmation',
+                                                                    action_long_desc='Are you sure you want to quit?',
+                                                                    action_short_name='Yes',
+                                                                    blocking=True) # 다른 곳 클릭 금지시키기
+
 			if event.type == pygame.USEREVENT:
 				if event.user_type == pygame_gui.UI_CONFIRMATION_DIALOG_CONFIRMED:
 					if event.ui_element == self.graphics.confirm:
 						self.terminate_game()
+					else:
+						self.graphics.exit = not self.graphics.exit
 
 			if event.type == MOUSEBUTTONDOWN:
 				if self.hop == False:
@@ -90,6 +100,8 @@ class Game:
 
 					else:
 						self.selected_piece = self.mouse_pos
+			
+			manager.process_events(event)
 
 
 	def update(self):
@@ -144,9 +156,6 @@ class Graphics:
 	def __init__(self):
 		self.caption = "CLASSIC BOARD GAME : CHECKERS V1.0"
 
-		self.fps = 60
-		self.clock = pygame.time.Clock()
-
 		self.window_size = 600
 		self.screen = pygame.display.set_mode((self.window_size, self.window_size))
 		self.background = pygame.image.load('resources/board.png')
@@ -168,11 +177,18 @@ class Graphics:
 		"""
 		This updates the current display.
 		"""
-		if self.exit != True:
+
+		manager.update(pygame.time.Clock().tick(60))
+
+		if self.exit == False:
+			pygame.event.set_allowed([pygame.KEYDOWN, pygame.KEYUP])
 			self.screen.blit(self.background, (0,0))
 
 			self.highlight_squares(legal_moves, selected_piece)
 			self.draw_board_pieces(board)
+		else:
+			pygame.event.set_blocked([pygame.KEYDOWN, pygame.KEYUP])
+			self.screen.fill((0, 0, 0))
 
 		if self.paused:
 			self.draw_message("Paused")  # 일시정지 메시지를 그림.
@@ -188,8 +204,8 @@ class Graphics:
 		if self.message:
 			self.screen.blit(self.text_surface_obj, self.text_rect_obj)
 
+		manager.draw_ui(self.screen)
 		pygame.display.update()
-		self.clock.tick(self.fps)
 
 	def draw_board_squares(self, board):
 		"""
@@ -230,14 +246,7 @@ class Graphics:
 		self.text_rect_obj.center = (self.window_size // 2, self.window_size // 2)
 
 	def draw_question(self, question):
-		print("[DEBUG]: 메시지박스 실행중입니다.")
 		self.exit = True
-		self.confirm = pygame_gui.windows.UIConfirmationDialog(rect=pygame.Rect((250, 200), (300, 200)),
-                                                                    manager=manager,
-                                                                    window_title='Quit Confirmation',
-                                                                    action_long_desc=f'{question}',
-                                                                    action_short_name='Yes',
-                                                                    blocking=True) # 다른 곳 클릭 금지시키기
 
 class Board:
 	def __init__(self):
