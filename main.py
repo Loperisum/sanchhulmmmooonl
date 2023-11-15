@@ -32,6 +32,7 @@ def main():
                 #count_nodes = random_bot_blue.step(game.board, True)
                 #print('Total nodes explored in this step are', count_nodes)
                 game.update()
+                
             else:
                 # game.player_turn()
                 count_nodes = bot.step(game.board, True)

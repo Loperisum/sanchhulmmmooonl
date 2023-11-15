@@ -23,7 +23,12 @@ running = True
 while running:
     # 이벤트 처리
     for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                print('hello this is esc')
+
         if event.type == pygame.QUIT:
+            pygame.event.set_blocked([pygame.KEYDOWN, pygame.KEYUP])
             # 정말 나가겠냐고 묻는 메시지 박스 생성
             confirm_dialog = pygame_gui.windows.UIConfirmationDialog(rect=pygame.Rect((250, 200), (300, 200)),
                                                                     manager=manager,
@@ -45,6 +50,8 @@ while running:
             elif event.user_type == pygame_gui.UI_CONFIRMATION_DIALOG_CONFIRMED:
                 if event.ui_element == confirm_dialog:
                     running = False
+
+            pygame.event.set_allowed([pygame.KEYDOWN, pygame.KEYUP])
 
         manager.process_events(event)
 
