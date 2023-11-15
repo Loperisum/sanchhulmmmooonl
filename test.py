@@ -36,6 +36,13 @@ while running:
             if event.user_type == pygame_gui.UI_CONFIRMATION_DIALOG_CONFIRMED:
                 if event.ui_element == confirm_dialog:
                     running = False
+            
+            elif event.user_type == pygame_gui.UI_WINDOW_CLOSE:
+                if event.ui_element == confirm_dialog :
+                    if running:
+                        print("그냥 닫힘")
+                    else:
+                        running = False
 
             pygame.event.set_allowed([pygame.KEYDOWN, pygame.KEYUP])
 

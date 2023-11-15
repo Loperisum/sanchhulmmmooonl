@@ -36,6 +36,7 @@ class Game:
 		self.clock = pygame.time.Clock()
 		self.fps = 60
 		self.graphics.confirm = None
+		self.yes = False
 
 	def setup(self):
 		# Draw the window and board at the beginning of the game
@@ -69,9 +70,10 @@ class Game:
 			if event.type == pygame.USEREVENT:
 				if event.user_type == pygame_gui.UI_CONFIRMATION_DIALOG_CONFIRMED:
 					if event.ui_element == self.graphics.confirm:
-						self.terminate_game()
-					else:
-						self.graphics.exit = not self.graphics.exit
+						if self.yes:
+							self.graphics.exit = not self.graphics.exit
+						else:
+							self.terminate_game()
 
 			if event.type == MOUSEBUTTONDOWN:
 				if self.hop == False:
@@ -188,7 +190,7 @@ class Graphics:
 			self.draw_board_pieces(board)
 		else:
 			pygame.event.set_blocked([pygame.KEYDOWN, pygame.KEYUP])
-			self.screen.fill((0, 0, 0))
+			self.screen.blit(self.bg, (0, 0))
 
 		if self.paused:
 			self.draw_message("Paused")  # 일시정지 메시지를 그림.
