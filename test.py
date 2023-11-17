@@ -38,7 +38,7 @@ while running:
                     running = False
             
             elif event.user_type == pygame_gui.UI_WINDOW_CLOSE:
-                if event.ui_element == confirm_dialog :
+                if event.ui_element == confirm_dialog:
                     if running:
                         print("그냥 닫힘")
                     else:

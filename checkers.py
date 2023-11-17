@@ -53,10 +53,10 @@ class Game:
 				self.terminate_game()
 
 			if event.type == pygame.KEYDOWN:
-				if event.key == pygame.K_ESCAPE:
+				if event.key == pygame.K_ESCAPE and self.graphics.exit != True:
 					self.graphics.paused = not self.graphics.paused
 					self.graphics.message = not self.graphics.message
-				elif event.key == pygame.K_q:
+				elif event.key == pygame.K_q and self.graphics.paused != True:
 					self.graphics.exit = not self.graphics.exit
 
 					if self.graphics.exit:
@@ -74,6 +74,10 @@ class Game:
 							self.graphics.exit = not self.graphics.exit
 						else:
 							self.terminate_game()
+				elif event.user_type == pygame_gui.UI_WINDOW_CLOSE:
+					if event.ui_element == self.graphics.confirm:
+						self.graphics.exit = False
+						print("그냥닫힘")
 
 			if event.type == MOUSEBUTTONDOWN:
 				if self.hop == False:
@@ -188,26 +192,24 @@ class Graphics:
 
 			self.highlight_squares(legal_moves, selected_piece)
 			self.draw_board_pieces(board)
-		else:
+		if self.exit and self.paused != True:
 			pygame.event.set_blocked([pygame.KEYDOWN, pygame.KEYUP])
 			self.screen.blit(self.bg, (0, 0))
-
-		if self.paused:
-			self.draw_message("Paused")  # 일시정지 메시지를 그림.
-			self.screen.blit(self.bg, (0, 0))
-			pygame.event.set_blocked(MOUSEBUTTONDOWN)
-
-		elif self.exit:
-			self.draw_question("Are you sure you want to exit?")
-
+			manager.draw_ui(self.screen)
+			pygame.display.update()
 		else:
-			pygame.event.set_allowed(MOUSEBUTTONDOWN)
+			if self.paused:
+				self.draw_message("Paused")  # 일시정지 메시지를 그림.
+				self.screen.blit(self.bg, (0, 0))
+				pygame.event.set_blocked(MOUSEBUTTONDOWN)
 
-		if self.message:
-			self.screen.blit(self.text_surface_obj, self.text_rect_obj)
+			else:
+				pygame.event.set_allowed(MOUSEBUTTONDOWN)
 
-		manager.draw_ui(self.screen)
-		pygame.display.update()
+			if self.message:
+				self.screen.blit(self.text_surface_obj, self.text_rect_obj)
+
+			pygame.display.update()
 
 	def draw_board_squares(self, board):
 		"""
@@ -246,9 +248,6 @@ class Graphics:
 		self.text_surface_obj = self.font_obj.render(message, True, HIGH, BLACK)
 		self.text_rect_obj = self.text_surface_obj.get_rect()
 		self.text_rect_obj.center = (self.window_size // 2, self.window_size // 2)
-
-	def draw_question(self, question):
-		self.exit = True
 
 class Board:
 	def __init__(self):
